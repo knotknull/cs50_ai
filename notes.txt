@@ -1,0 +1,131 @@
+
+Harvard CS50's Artificial Intelligence with Python
+
+https://youtu.be/5NgNicANyqM?si=KdWVNjTdk5Oqrs_b
+
+## My notes for the course
+outline
+- search
+- knowledge
+- uncertainty
+- optimization
+- learning
+- neural networks
+- language
+
+
+
+## Search
+
+
+
+agent: entity that perceives its environment and acts upon that environment
+
+state: a configuration of the agent in it's environment
+
+initial state: state in which agent begins
+
+actions: choices that can be made in a state
+    - actions as a function
+    - Actions(s) returns the set of actions that can be executed in state s
+
+
+
+coding around state, coding around actions leads to 
+
+transition model:  a description of what state results from performing any applicable action in any state
+    - result(s,a) returns the state resulting from performing action a in the state s
+
+ex using number puzzle
+
+           state      action     result state
+       { 2, 4, 5, 7}            { 2, 4, 5, 7}
+result({ 8, 3, 1,11}, ->[]) =   { 8, 3, 1,11}       == Transtition Model
+       {14, 6,10,12}   ^        {14, 6,10,12}
+       { 9,13,15,  }   |        { 9,13,15,  }
+                       | 
+                       +--- action == slide to right
+
+
+state space: the set of all states reachable from the initial state by any sequence of actions
+
+    - individual states with arrows connecting them
+    - simplified as a graph
+        - nodes and edges that connect nodes
+
+
+                    state
+                      |
+                      v
+            [ ] --> [ ] --> [ ] 
+action --->  |    \         ^ 
+             v      v    /
+            [ ] --> [ ] --> [ ] 
+             |       |   \ 
+             v       v     v 
+            [ ] --> [ ] --> [ ] 
+
+
+
+How do you (AI) know when you have found the "goal" ??
+
+goal test: way to determine whether a given state is a goal state
+
+path cost: numerical cost associated with a given path (weighting or miles, etc.)
+    - for search, every path will have a cost associated with it
+        - find least path cost 
+
+                4        2 
+            [A] --> [B] --> [G] 
+             |   \          ^ 3
+          2  |     \      /  
+             v      v5  /  
+            [C] --->[D]  ---> [E] 
+             |   1   |   \ 6
+          3  |       |     \ 
+             v     2 v       v 3 
+            [H] --->[I] ---> [F] 
+                 4       2 
+
+
+Search Problem:
+ - initial state
+ - actions
+ - transition model
+ - goal test
+ - path cost function
+
+solution        : a sequence of actions that leads from the initial state to a goal state
+optimal solution: a solution that has the lowest path cost among all solutions
+
+
+
+node: a data structure that keeps track of 
+    - a state
+    - a parent (node that generated this node)
+    - an action (action applied to parent to get node)
+    - a path cost (from initial state to node)
+
+how to get to a solution:
+    - start at a state and explore options (paths)
+
+frontier: all available options stored 
+
+Search Approach:
+    - Start with a frontier that contains the initial state
+    - Repeat:
+        - if the frontier is empty, then no solution
+        - remove a node from the frontier
+        - if node contains goal state, return the solution
+                - apply goal test
+        - expand node, add resulting nodes to the frontier
+                - consider all possibe actions from current state and the nodes they lead to 
+                    add these nodes to frontier 
+                        i.e. add next nodes I can get to from current state to frontier
+
+[ STOPPED @ 22:01, sample search problem ]
+
+
+
+
+. 
