@@ -118,14 +118,218 @@ Search Approach:
         - remove a node from the frontier
         - if node contains goal state, return the solution
                 - apply goal test
-        - expand node, add resulting nodes to the frontier
+        - expand node, add resulting nodes to the frontier  (expande node == look at all neighbors of node)
                 - consider all possibe actions from current state and the nodes they lead to 
                     add these nodes to frontier 
                         i.e. add next nodes I can get to from current state to frontier
+Find Path from A to E
 
-[ STOPPED @ 22:01, sample search problem ]
+     [A] --> [B]
+              |  \
+              |   \
+              v    v
+             [C]   [D] 
+              |     |
+              v     v
+             [E]   [F]
+
+These are the states follwoing the search approach
+
+[[ ]] == Frontier
+
+
+1.  {{ [A] }}   << Frontier with initial state 
+2.  {{ }}         [A] removed node from frontier, not goal state
+                    - expand node  >> [B]
+3.  {{ [B] }}     add resulting node to Frontier
+4.  {{ }}         [B] removed node from frontier, not goal state
+                    - expand node  >> [C] [D]
+5.  {{ [C] [D] }}    add resulting nodes to Frontier
+6.  {{ [D] }}     [C] removed node from frontier, not goal state
+                    - expand node  >> [E]
+7.  {{ [E] [D] }}    add resulting nodes to Frontier
+8.  {{ [D] }}     [E] removed node from frontier, GOAL STATE FOUND
+
+
+NOTE: Avoid loops, keep track of explored states
+
+
+REVISED Search Approach:
+    - Start with a frontier that contains the initial state
+    - Start with an empty explored set
+    - Repeat:
+        - if the frontier is empty, then no solution
+        - remove a node from the frontier
+        - if node contains goal state, return the solution
+                - apply goal test
+        - add node to explored state    << KEEPING TRACK OF PREVIOUS STATES / PATHS
+        - expand node, add resulting nodes to the frontier IF 
+             they aren't already in the frontier or the explored state
 
 
 
+stack: last-in first out data type (LIFO, stack of trays)
+Frontier of a stack 
+    - Depth-First Search: always expands the deepest node of in the frontier
+            A -> B -> D -> F -> C -> 
 
-. 
+    - Breadth-First Search: always expands the shallowest node in the frontier 
+queue: first-in first-out datatype
+
+            A -> B -> C -> D -> E 
+
+
+Depth  First Search (DFS) uses a stack
+Breath First Search (BFS) uses a queue
+
+
+# uninformed search: search stategy that uses no problem-specific knowledge
+        - DFS, BFS
+
+
+# informed search: search stategy that uses problem-specific knowledge to find 
+                 solutions more efficiently
+
+
+ex.  
+    greedy best-first search: search algorithm that expands the node that is 
+         closest to the goal, as estiamated by a heuristic (estimate) function h(n)
+
+        - heuristic function:  Manhattan distance
+            - in a grid, how many steps to a goal (ignoreing walls )
+
+A* search: search algorithm that expands node with lowest vlaue of g(n) + h(n)
+    g(n) = cost to reach node (how many steps to get there )
+    h(n) = estimated cost to goal
+
+
+A* search is optimal if:
+    h(n) is admissible (never overestimates the true cost)   AND
+    h(n) is consistent (for every node n and successor n' with step cost c, h(n) < h(n') +c )
+
+
+# Adversarial Search
+    i.e. tic tac toe
+
+Minimax
+    - MAX(X) aims to maximize socre 
+    - MIN(O) aims to minimize socre 
+    - outcomes given different value
+
+
+    O | X | X         X | O | X         O |   | X
+    ----------        ----------        ----------
+    O | O |           O | O | X           | X | O     
+    ----------        ----------        ----------
+    O | X | X         X | X | O         X | O | X
+
+    score = -1        score = 0         score = 1     
+       O wins            tie               X wins
+
+GAME: 
+    - S0: initial state
+    - Player(s) :  returns which player to move in state S
+    - Actions(s):  returns legal moves in state S
+    - Result(s,a): returns state after actin a taken in state s
+    - Terminal(s): checks if state s is a terminal state
+    - Utility(s):  final numerical value for terminal state s
+
+# s0
+Initial State = [[_,_,_],[_,_,_],[_,_,_]]
+
+# Player(s)
+Player( [[_,_,_],[_,_,_],[_,_,_]] )  == X   (X goes first)
+Player( [[_,_,_],[_,X,_],[_,_,_]] )  == 0   (X went, now O) 
+
+
+# Actions(s)
+Actions([[_,X,O],[O,X,X],[X,_,O]] )  ==   { [[O,_,_],[_,_,_],[_,_,_]],      ## Given a state, return set of actions
+                                            [[_,_,_],[_,_,_],[_,O,_]] }
+
+# Result(s, a)
+              v--- state                  v--- action                       v--- result state  
+Result([[_,X,O],[O,X,X],[X,_,O]],  [[O,_,_],[_,_,_],[_,_,_]]  )  ==   [[O,X,O],[O,X,X],[X,_,O]]
+
+
+# Terminal(s)
+Terminal([[O,_,_],[O,X,_],[X,O,X]])  == false
+Terminal([[O,_,X],[O,X,_],[X,O,X]])  == true
+
+
+# Utility(s)
+
+Terminal([[O,_,X],[O,X,_],[X,O,X]])  ==  1  (X wins == 1)
+Terminal([[O,X,X],[X,O,_],[O,X,O]])  == -1  (O wins == 1)
+
+
+|
+ 
+
+
+Min player chooses min value
+Max player chooses max value
+
+when at a state, cycle thru  Actions set and determin Min / Max value 
+(Minimax is recursive)
+
+
+Minimax:
+- Given a state s:
+    - MAX pics action a in Actions(s) that produces highest  value of MinValue(Results(s,a))
+    - MIN pics action a in Actions(s) that produces smallest value of MaxValue(Results(s,a))
+
+
+
+function MaxValue(s)
+
+    if Terminal(state):
+        return Utility(state)
+
+    v = -infinity
+    for action in Actions(state):
+        v=max(v, MinValue(Restuls(state,action)))
+    return v    
+
+
+
+function MinValue(s)
+
+    if Terminal(state):
+        return Utility(state)
+
+    v = +infinity
+    for action in Actions(state):
+        v=min(v, MaxValue(Restuls(state,action)))
+    return v    
+
+
+  _                                                     ----- 
+/   \  = max player                                     \   /  min player
+-----                                                     -
+
+                                       _    
+                                     / 4 \  
+                                     -----  
+                                       |                            
+                                       |                            
+         +-----------------------------+---------------------------+                      
+         |                             |                           |
+       -----                         -----                       ----- 
+       \ 4 /                         \ 3 /                       \ 2 /  
+         -                             -                           -
+         |                             |                           |
+         |                             |                           |
+  +------+------+               +------+-------+            +------+------+ 
+  |      |      |               |      |       |            |      |      | 
+  _      _      _               _      _       _            _      _      _     
+/ 4 \  / 8 \  / 5 \           / 9 \  / 3 \   / 7 \        / 2 \  / 4 \  / 6 \  
+-----  -----  -----           -----  -----   -----        -----  -----  -----  
+
+
+Optimization 
+
+
+[stopped at 1:42:24]
+
+
+.
